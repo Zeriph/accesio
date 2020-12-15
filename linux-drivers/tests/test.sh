@@ -1,0 +1,39 @@
+#!/bin/bash
+# Copyright (c), ACCES I/O Products, Inc.
+# All rights reserved.
+# 
+# Contributor(s):
+# Zach Perez, zach.perez@accesio.com
+# 
+# PERMISSION TO USE, COPY, MODIFY, AND/OR DISTRIBUTE THIS SOFTWARE FOR ANY
+# PURPOSE WITH OR WITHOUT FEE IS HEREBY GRANTED, PROVIDED THAT THE ABOVE
+# COPYRIGHT NOTICE AND THIS PERMISSION NOTICE APPEAR IN ALL COPIES.
+# 
+# THIS SOFTWARE IS PROVIDED BY ACCES I/O AND CONTRIBUTORS "AS IS" AND ANY
+# EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+# WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+# DISCLAIMED. IN NO EVENT SHALL ACCES I/O AND CONTRIBUTORS BE LIABLE FOR ANY
+# DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+# (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+# LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+# ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+# (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+# SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+# This file is to demonstrate how to utilize communicate with the
+# ACCES I/O device via normal function calls.
+dev=$1
+if [ "$dev" == "" ]; then
+    dev="/dev/null"
+fi
+echo "Communicating with device $dev"
+for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    echo "Reading from offset $i"
+    echo -n "data read = "
+    dd if=$dev bs=1 count=1 skip=$i 2>/dev/null | hexdump -e '/1 "0x" "%02X" "\n"'
+done
+for i in 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+    echo "Writing to offset $i"
+    echo -n "\0" | dd of=$dev bs=1 seek=$i 2>/dev/null
+    echo "wrote data"
+done
